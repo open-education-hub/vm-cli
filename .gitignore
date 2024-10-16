@@ -1,0 +1,31 @@
+# Temporary and editor files
+*~
+*swp
+*swo
+\#*\#
+.\#*
+\#_*\#
+.\#_*
+
+# Build output files
+*.o
+*.a
+*.d
+*.so
+
+# Patch files
+/*.patch
+/*.diff
+*.orig
+*.rej
+*.bak
+*.pyc
+
+# Archive files
+*.cpio
+*.tar
+*.bz2
+*.gz
+*.zip
+*.Z
+*.7z

@@ -2,7 +2,7 @@ UK_ROOT ?= $(PWD)/../repos/unikraft
 UK_BUILD ?= $(PWD)/out
 UK_APP ?= $(PWD)
 LIBS_BASE = $(PWD)/../repos/libs
-UK_LIBS ?= $(LIBS_BASE)/musl
+UK_LIBS ?=
 
 .PHONY: all
 

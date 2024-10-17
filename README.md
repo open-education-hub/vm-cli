@@ -44,6 +44,36 @@ For that we follow the three tutorials here to build and run image files:
 * x86_64: https://blog.ghaiklor.com/2017/10/21/how-to-implement-your-own-hello-world-boot-loader/
 * ARM: https://jasonblog.github.io/note/arm_emulation/hello_world_for_bare_metal_arm_using_qemu.html
 
+If you do not want to deal with assembly code, we have prepared a minimal setup in `./c-hello/`.
+There, we have a `hello.c` file that just prints a `Hello world` message.
+
+To biuld it and run it as a virtual machine, we have provided some scripts.
+They will pack the application as an [`unikernel`](https://en.wikipedia.org/wiki/Unikernel), using [`Unikraft`](https://unikraft.org/) and create a minimal virtual machine.
+The details of this are not that relevant, we will focus on the way the virtual machine is started using `qemu`.
+
+To build the application, run the `build.qemu.x86_64` script.
+To run it, use the `run.qemu.x86_64` script.
+This will use the followin `qemu` command:
+
+```console
+qemu-system-x86_64 \
+    -nographic \
+    -m 8 \
+    -cpu max \
+    -kernel out/c-hello_qemu-x86_64
+```
+
+What it does is: give the VM 8M of memory, tell it to not open a graphical window, to just print the output to the terminal instead, use the cpu with maximal features and then point to the kernel image.
+You can try to run the command by hand.
+
+After that, you can also use the `aarch64` scripts to build and run for the `aarch64` architecture.
+
+Modify the source code to print `Bye, world!` instead of the original message, build and run again and see if the changes take place correctly.
+
+After that, also try out the `c-http/` application, using the same scripts.
+Look in the `run.qemu` scripts and try to figure out what they do extra.
+Look in the `README` file of the application to see how to test it.
+
 ## Run Full-Fledged OSes
 
 Follow these instructions to run full-fledged OSes:

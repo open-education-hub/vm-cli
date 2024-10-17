@@ -12,6 +12,29 @@ Make sure you have the `qemu-system-x86` and `qemu-system-arm` or equivalent pac
 The GNU toolchain (GCC, Make) is also required.
 On a Debian/Ubuntu system, installing the `build-essential` package should be enough.
 
+On a Debian-based system, run the commands below to install required packages:
+
+```console
+sudo apt install -y --no-install-recommends \
+  build-essential \
+  sudo \
+  gcc-aarch64-linux-gnu \
+  libncurses-dev \
+  libyaml-dev \
+  flex \
+  bison \
+  git \
+  wget \
+  uuid-runtime \
+  qemu-kvm \
+  qemu-system-x86 \
+  qemu-system-arm \
+  sgabios \
+  mtools \
+  grub-common \
+  nasm
+```
+
 ## Short Intro
 
 QEMU is an emulator that can make use the [KVM support](https://linux-kvm.org/page/Main_Page) in the Linux kernel to provide virtualization.
@@ -38,11 +61,114 @@ There are two main ways to run a virtual machine:
 Our goal is go boot a baremetal disk image that prints a "Hello, World!" message.
 Since this is a very early on message, we will make use of early boot code instructions.
 
-For that we follow the three tutorials here to build and run image files:
+### Hello World as a Bootloader
 
-* x86_64: https://medium.com/@g33konaut/writing-an-x86-hello-world-boot-loader-with-assembly-3e4c5bdd96cf
-* x86_64: https://blog.ghaiklor.com/2017/10/21/how-to-implement-your-own-hello-world-boot-loader/
-* ARM: https://jasonblog.github.io/note/arm_emulation/hello_world_for_bare_metal_arm_using_qemu.html
+The simplest way is to have the program running as a bootloader.
+This is easy, but severely limited since it can only use the first sector of the image.
+
+Go to the `x86/hello-bootloader/` directory.
+There are two subdirectories, depending on the assembler used: `as/` and `nasm/`.
+
+Enter each directory (`as/` and `nasm/).
+In each of them:
+
+1. Build the bootloader image:
+
+   ```console
+   make
+   ```
+
+1. Run the resulting image with QEMU:
+
+   ```console
+   make qemu
+   ```
+
+Look at the source code files (`hello.s` and `hello.asm`) to see how the bootloader program is created.
+Also check the `Makefile` in each directory to see how the bootloader is being built (with `as` or `nasm`) and run (with `qemu-system-x86_64`).
+
+#### Do It Yourself
+
+Update the programs to print "Bye, World!" instead of "Hello, World!".
+
+### Hello World as a Kernel Using Multiboot
+
+Getting past the bootloader limitations, we can build an actual kernel and boot it with QEMU.
+This requires a boot protocol, where QEMU knows how to locate and where to load the kernel.
+The default one is [Multiboot](https://www.gnu.org/software/grub/manual/multiboot/multiboot.html);
+we will use this.
+
+Go to the `x86/hello-kernel-multiboot/` directory.
+Similar to the above:
+
+1. Build the kernel image:
+
+   ```console
+   make
+   ```
+
+1. Run the resulting kernel with QEMU:
+
+   ```console
+   make qemu
+   ```
+
+Look at the source code files (`boot.asm` and `multiboot_header.asm`) to see how the kernel image is created.
+Check the linker script (`linker.ld`) as well.
+Also check the `Makefile` in each directory to see how the kernel is being built (with `nasm` and `ld`) and run (with `qemu-system-x86_64`).
+
+**Note**: If you don't have a GUI for QEMU, you can replace `-vga std` with `-curses` for a text user interface.
+
+#### Do It Yourself
+
+Update the program to print "Bye, World!" instead of "Hello, World!".
+
+You will have to update the `boot.asm` file.
+Careful about the screen buffer addresses.
+
+### Hello World as a Bootable Image
+
+Multiboot is limited to 32 bits.
+If you want to go for 64 bits, we need to create an image that stores a 64 bit kernel.
+The image also requires a bootloader configured (GRUB).
+
+Go to the `x86/hello-os-grub/` directory.
+Similar to the above:
+
+1. Build the kernel image:
+
+   ```console
+   make
+   ```
+
+1. Build the ISO image to boot, incorporating the kernel and the bootloader configuration:
+
+   ```console
+   make iso
+   ```
+
+1. Run the resulting ISO with QEMU:
+
+   ```console
+   make qemu
+   ```
+
+Look at the source code files (`boot.asm` and `multiboot_header.asm`) to see how the kernel image is created.
+They are quite similar to the ones above.
+Check the linker script (`linker.ld`) as well.
+And check the GRUB configuration file (`grub.cfg`).
+Also check the `Makefile` in each directory to see how the kernel is being built (with `nasm` and `ld`), how the ISO image is being built (with `grub-mkrescue`) and how the ISO image is being run (with `qemu-system-x86_64`).
+
+**Note**: If you don't have a GUI for QEMU, you can replace `-vga std` with `-curses` for a text user interface.
+
+#### Do It Yourself
+
+Update the program to print "Bye, World!" instead of "Hello, World!".
+
+You will have to update the `boot.asm` file.
+Careful about the screen buffer addresses.
+
+## Hello World in a Unikernel
 
 If you do not want to deal with assembly code, we have prepared a minimal setup in `./c-hello/`.
 There, we have a `hello.c` file that just prints a `Hello world` message.

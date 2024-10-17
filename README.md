@@ -168,6 +168,35 @@ Update the program to print "Bye, World!" instead of "Hello, World!".
 You will have to update the `boot.asm` file.
 Careful about the screen buffer addresses.
 
+### Hello World as a Kernel on ARM64
+
+Let's now build and boot a kernel for the ARM64 architecture.
+
+Go to the `arm/arm64-kernel/` directory.
+Similar to the above:
+
+1. Build the kernel image:
+
+   ```console
+   make
+   ```
+
+1. Run the resulting kernel with QEMU:
+
+   ```console
+   make qemu
+   ```
+
+Look at the source code files (`hello_world.c` and `startup.s`) to see how the kernel image is created.
+Check the linker script (`linker.ld`) as well.
+Also check the `Makefile` to see how the kernel is being built (with `aarch64-linux-gnu-as`, `aarch64-linux-gnu-gcc` and `aarch64-linux-gnu-ld`) and run (with `qemu-system-aarch64`).
+
+**Note**: Nasm doesn't work on ARM, so we cross-assemble using `as` (`aarch64-linux-gnu-as`).
+
+#### Do It Yourself
+
+Update the program to print "Bye, World!" instead of "Hello, World!".
+
 ## Hello World in a Unikernel
 
 If you do not want to deal with assembly code, we have prepared a minimal setup in `./c-hello/`.

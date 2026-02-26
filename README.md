@@ -35,6 +35,15 @@ sudo apt install -y --no-install-recommends \
   nasm
 ```
 
+For running applications with QEMU bridged networking, use the command below:
+
+```console
+test -d /etc/qemu || sudo mkdir /etc/qemu
+echo "allow all" | sudo tee /etc/qemu/bridge.conf
+```
+
+It enables QEMU bridged networking.
+
 ## Short Intro
 
 QEMU is an emulator that can make use the [KVM support](https://linux-kvm.org/page/Main_Page) in the Linux kernel to provide virtualization.
